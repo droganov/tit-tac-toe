@@ -41,9 +41,8 @@ const makeTurn = (index: number, turn: boolean): void => {
   const last = movesStore.last()
   const results = [...last.results]
   results[index] = turn
-  const selectedColNumber = getSelectedColNumber(last.size, results)
-  const selectedDiagonalNumber = getSelectedDiagonalNumber(last.size, results)
-  const selectedRowNumber = getSelectedRowNumber(last.size, results)
+  const { selectedColNumber, selectedDiagonalNumber, selectedRowNumber } =
+    getWinner(last.size, results)
 
   movesStore.next({
     isDraw: !results.includes(null),
@@ -72,47 +71,48 @@ const isFilled = (results: Results): boolean => {
   return items.size === 1 && !items.has(null)
 }
 
-const getSelectedRowNumber = (size: number, results: Results): number => {
-  for (let i = 0; i < size; i++) {
-    const values = results.slice(i * size, i * size + size)
-    if (isFilled(values)) {
-      return i
-    }
-  }
-  return -1
-}
+const getWinner = (
+  size: number,
+  results: Results
+): Pick<
+  State,
+  'selectedColNumber' | 'selectedDiagonalNumber' | 'selectedRowNumber'
+> => {
+  let selectedColNumber = -1
+  let selectedDiagonalNumber = -1
+  let selectedRowNumber = -1
 
-const getSelectedColNumber = (size: number, results: Results): number => {
-  for (let i = 0; i < size; i++) {
-    const values = results.filter((_, j) => j % size === i)
-    if (isFilled(values)) {
-      return i
-    }
-  }
-  return -1
-}
-
-const getSelectedDiagonalNumber = (size: number, results: Results): number => {
   const diagonal1 = Array(size).fill(null)
   const diagonal2 = [...diagonal1]
 
   for (let i = 0; i < size; i++) {
-    const v1 = results[i * size + i]
-    const v2 = results[i * size + size - i - 1]
+    diagonal1[i] = results[i * size + i]
+    diagonal2[i] = results[i * size + size - i - 1]
 
-    diagonal1[i] = v1
-    diagonal2[i] = v2
+    const row = results.slice(i * size, i * size + size)
+    if (isFilled(row)) {
+      selectedRowNumber = i
+    }
+
+    const col = results.filter((_, j) => j % size === i)
+    if (isFilled(col)) {
+      selectedColNumber = i
+    }
   }
 
   if (isFilled(diagonal1)) {
-    return 0
+    selectedDiagonalNumber = 0
   }
 
   if (isFilled(diagonal2)) {
-    return 1
+    selectedDiagonalNumber = 1
   }
 
-  return -1
+  return {
+    selectedColNumber,
+    selectedDiagonalNumber,
+    selectedRowNumber,
+  }
 }
 
 export const Game: FunctionComponent = () => {
