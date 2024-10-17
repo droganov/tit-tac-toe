@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import type { FunctionComponent } from 'react'
 
-import { FormDemo } from './FormDemo'
+import { Game } from '../components/Game/Game'
 
 export const metadata: Metadata = {
   manifest: '/manifest.json',
@@ -13,7 +13,7 @@ const HomePage: FunctionComponent = () => {
     <>
       <main className="container max-w-lg mx-auto px-4">
         <h1 className="text-2xl my-4 text-center">Tic-Tac-Toe</h1>
-        <FormDemo />
+        <Game />
       </main>
     </>
   )

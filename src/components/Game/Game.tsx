@@ -90,7 +90,7 @@ const getSelectedDiagonalNumber = (size: number, results: Results): number => {
   return -1
 }
 
-export const FormDemo: FunctionComponent = () => {
+export const Game: FunctionComponent = () => {
   const { results, size, turn } = useStore(movesStore)
 
   useEffect(() => {
