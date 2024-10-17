@@ -1,0 +1,30 @@
+name: Test
+'on':
+  push: null
+  pull_request: null
+jobs:
+  full:
+    name: Node.js 20 Full
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8.15.6
+          run_install: false
+
+      - name: Install dependencies
+        run: make i
+      - name: Build with checks
+        run: make b
+        env:
+          FORCE_COLOR: 2
+          NEXT_TELEMETRY_DISABLED: 1
