@@ -23,7 +23,7 @@ const initialState: State = {
 
 const movesStore = createStore<State>(initialState)
 
-const makeMove = (index: number, turn: boolean): void => {
+const makeTurn = (index: number, turn: boolean): void => {
   const last = movesStore.last()
   const results = [...last.results]
   results[index] = turn
@@ -151,7 +151,7 @@ export const Game: FunctionComponent = () => {
               )}
               key={i}
               onClick={() => {
-                makeMove(i, turn)
+                makeTurn(i, turn)
               }}
             >
               {value === true && 'X'}
