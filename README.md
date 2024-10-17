@@ -1,9 +1,3 @@
-# Yobta Next
+# Tic-Tac-Quack
 
-A pre-configured yobta boilerplate for nextjs
-
-## Install
-
-```
-npx yobta next my-app-name
-```
+[Source](src/components/Game/Game.tsx), [Demo](https://tic-tac-quack.vercel.app/)

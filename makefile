@@ -10,6 +10,9 @@ lf:
 p:
 	pnpm run prettify
 
+prod:
+	npx vercel --prod
+
 s:
 	pnpm run start
 
