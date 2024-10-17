@@ -5,7 +5,7 @@ import { Game } from '../components/Game/Game'
 
 export const metadata: Metadata = {
   manifest: '/manifest.json',
-  title: 'App Yobta',
+  title: 'Demo',
 }
 
 const HomePage: FunctionComponent = () => {

@@ -10,13 +10,23 @@ type Results = (boolean | null)[]
 type Size = 3 | 4 | 5
 
 type State = {
+  isDraw: boolean
+  isOver: boolean
   results: Results
+  selectedColNumber: number
+  selectedDiagonalNumber: number
+  selectedRowNumber: number
   size: Size
   turn: boolean
 }
 
 const initialState: State = {
+  isDraw: false,
+  isOver: false,
   results: Array(9).fill(null),
+  selectedColNumber: -1,
+  selectedDiagonalNumber: -1,
+  selectedRowNumber: -1,
   size: 3,
   turn: true,
 }
@@ -31,8 +41,19 @@ const makeTurn = (index: number, turn: boolean): void => {
   const last = movesStore.last()
   const results = [...last.results]
   results[index] = turn
+  const selectedColNumber = getSelectedColNumber(last.size, results)
+  const selectedDiagonalNumber = getSelectedDiagonalNumber(last.size, results)
+  const selectedRowNumber = getSelectedRowNumber(last.size, results)
+
   movesStore.next({
+    isDraw: !results.includes(null),
+    isOver:
+      Math.max(selectedRowNumber, selectedColNumber, selectedDiagonalNumber) !==
+      -1,
     results,
+    selectedColNumber,
+    selectedDiagonalNumber,
+    selectedRowNumber,
     size: last.size,
     turn: !turn,
   })
@@ -40,9 +61,9 @@ const makeTurn = (index: number, turn: boolean): void => {
 
 const reset = (size: Size): void => {
   movesStore.next({
+    ...initialState,
     results: Array(size * size).fill(null),
     size,
-    turn: true,
   })
 }
 
@@ -95,15 +116,16 @@ const getSelectedDiagonalNumber = (size: number, results: Results): number => {
 }
 
 export const Game: FunctionComponent = () => {
-  const { results, size, turn } = useStore(movesStore)
-
-  const selectedRowNumber = getSelectedRowNumber(size, results)
-  const selectedColNumber = getSelectedColNumber(size, results)
-  const selectedDiagonalNumber = getSelectedDiagonalNumber(size, results)
-
-  const isOver =
-    Math.max(selectedRowNumber, selectedColNumber, selectedDiagonalNumber) !==
-    -1
+  const {
+    isDraw,
+    isOver,
+    results,
+    selectedColNumber,
+    selectedDiagonalNumber,
+    selectedRowNumber,
+    size,
+    turn,
+  } = useStore(movesStore)
 
   return (
     <>
@@ -158,8 +180,15 @@ export const Game: FunctionComponent = () => {
           )
         })}
       </div>
+      {isDraw && (
+        <div className="text-center text-lg my-4">
+          It&apos;s a tie! Both X and O get participation trophies... and a
+          nagging feeling that they&apos;ve wasted their lives on a futile
+          struggle for dominance.
+        </div>
+      )}
       {isOver && (
-        <div className="text-center text-2xl my-4">
+        <div className="text-center text-lg my-4">
           {turn ? 'O' : 'X'} wins!{' '}
           <span>
             {!turn ? 'O' : 'X'} gets a participation trophy... and a strong urge
