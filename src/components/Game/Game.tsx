@@ -1,9 +1,9 @@
 'use client'
-import { createStore } from '@yobta/stores'
+import { createStore, sessionStoragePlugin } from '@yobta/stores'
 import { useStore } from '@yobta/stores/react'
 import { Button } from '@yobta/ui'
 import clsx from 'clsx'
-import { type FunctionComponent, useEffect } from 'react'
+import type { FunctionComponent } from 'react'
 
 type Results = (boolean | null)[]
 
@@ -21,7 +21,11 @@ const initialState: State = {
   turn: true,
 }
 
-const movesStore = createStore<State>(initialState)
+const movesStore = createStore<State>(
+  initialState,
+  // prevents state loss when refreshing the page
+  sessionStoragePlugin({ channel: 'tic-tac-toe' })
+)
 
 const makeTurn = (index: number, turn: boolean): void => {
   const last = movesStore.last()
@@ -92,12 +96,6 @@ const getSelectedDiagonalNumber = (size: number, results: Results): number => {
 
 export const Game: FunctionComponent = () => {
   const { results, size, turn } = useStore(movesStore)
-
-  useEffect(() => {
-    if (results.length !== size * size) {
-      reset(size)
-    }
-  }, [size, results.length])
 
   const selectedRowNumber = getSelectedRowNumber(size, results)
   const selectedColNumber = getSelectedColNumber(size, results)
